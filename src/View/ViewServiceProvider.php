@@ -1,10 +1,13 @@
 <?php namespace Anomaly\Streams\Platform\View;
 
+use Anomaly\Streams\Platform\Security\SecurityPolicy;
+use Anomaly\Streams\Platform\Security\SandboxingTemplate;
 use Anomaly\Streams\Platform\View\Twig\Bridge;
 use Anomaly\Streams\Platform\View\Twig\Compiler;
 use Anomaly\Streams\Platform\View\Twig\Engine;
 use Anomaly\Streams\Platform\View\Twig\Loader;
 use InvalidArgumentException;
+use Twig\Extension\SandboxExtension;
 use Twig_Loader_Array;
 use Twig_Loader_Chain;
 
@@ -26,6 +29,7 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
     public function register()
     {
         //$this->registerCommands();
+        $this->registerSandboxExtension();
         $this->registerOptions();
         $this->registerLoaders();
         $this->registerEngine();
@@ -39,6 +43,7 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
     {
         $this->loadConfiguration();
         $this->registerExtension();
+        $this->overrideTemplateSingleton();
     }
 
     /**
@@ -152,6 +157,11 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
                     array_unshift($load, 'Twig_Extension_Debug');
                 }
 
+                $securityPolicyEnabled = $this->app['config']->get('twig.security_policy.enabled', "auto");
+                if ($securityPolicyEnabled != "off") {
+                    array_unshift($load, 'Twig\Extension\SandboxExtension');
+                }
+
                 return $load;
             }
         );
@@ -212,6 +222,50 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
             },
             true
         );
+    }
+
+    /**
+     * Register the twig sandbox extension with out configured security policy.
+     *
+     * @return void
+     */
+    protected function registerSandboxExtension()
+    {
+
+        // Bind the sandbox policy
+        $this->app->bind('Twig\Sandbox\SecurityPolicyInterface', function () {
+            $policyConfig = $this->app['config']->get('twig.security_policy', []);
+            return new SecurityPolicy(
+                $policyConfig['tags'] ?? [SecurityPolicyDefaults::INCLUDE_DEFAULTS],
+                $policyConfig['filters'] ?? [SecurityPolicyDefaults::INCLUDE_DEFAULTS],
+                $policyConfig['methods'] ?? [SecurityPolicyDefaults::INCLUDE_DEFAULTS],
+                $policyConfig['properties'] ?? [SecurityPolicyDefaults::INCLUDE_DEFAULTS],
+                $policyConfig['functions'] ?? [SecurityPolicyDefaults::INCLUDE_DEFAULTS]
+            );
+        });
+
+
+        // Options: off, manual, auto, global
+        // | off: The sandbox extension is not loaded.
+        // | manual: The sandbox extension is loaded, but disabled, and must be enabled manually with either the sandbox tag or the include(sandbox=true) function.
+        // | auto: The sandbox is loaded disabled, but automatically enabled for all dynamically constructed Template objects using the SandboxingTemplate class.
+        // | global: The sandbox is globally enabled and applies to even hardcoded .twig files.
+        $sandboxEnabled = $this->app['config']->get('twig.security_policy.enabled', 'auto');
+        if ($sandboxEnabled != 'off') {
+        // Bind the sandbox extension with our securityPolicy, and global sandboxing setting
+            $this->app->bind(SandboxExtension::class, function ($app) use ($sandboxEnabled) {
+                return new SandboxExtension($app->make('Twig\Sandbox\SecurityPolicyInterface'), $sandboxEnabled == 'global');
+            });
+        }
+    }
+
+    protected function overrideTemplateSingleton()
+    {
+        $sandboxEnabled = $this->app->make('config')->get('twig.security_policy.enabled', 'auto');
+        if ($sandboxEnabled == 'auto') {
+            // If the sandbox is not enabled globally, then we need to use our SandboxingTemplate class to enable it for any dynamically generated (and therefore possibly user-controlled) templates
+            $this->app->singleton("Anomaly\Streams\Platform\Support\Template", SandboxingTemplate::class);
+        }
     }
 
     /**
