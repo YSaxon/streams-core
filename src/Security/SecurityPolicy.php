@@ -96,4 +96,38 @@ final class SecurityPolicy implements SecurityPolicyInterface
         }
     }
 
+    // The functions below are included to make this class drop-in compatible with the built-in Twig SecurityPolicy implementation.
+
+    public function setAllowedTags(array $tags): void
+    {
+        //if INCLUDE_DEFAULTS is in the array, remove it and add the defaults
+        $allowedTags = SecurityPolicyDefaults::addDefaultsToIndexedArray($tags, SecurityPolicyDefaults::TAGS);
+        $this->allowedTags = array_flip($allowedTags);
+    }
+
+    public function setAllowedFilters(array $filters): void
+    {
+        $allowedFilters = SecurityPolicyDefaults::addDefaultsToIndexedArray($filters, SecurityPolicyDefaults::FILTERS);
+        $this->allowedFilters = array_flip($allowedFilters);
+    }
+
+    public function setAllowedMethods(array $methods): void
+    {
+        $allowedMethods = SecurityPolicyDefaults::addDefaultsToAssociativeArray($methods, SecurityPolicyDefaults::METHODS);
+        $this->allowedMethods = new MethodMatcher($allowedMethods);
+    }
+
+    public function setAllowedProperties(array $properties): void
+    {
+        $allowedProperties = SecurityPolicyDefaults::addDefaultsToAssociativeArray($properties, SecurityPolicyDefaults::PROPERTIES);
+        $this->allowedProperties = new MethodMatcher($allowedProperties);
+    }
+
+    public function setAllowedFunctions(array $functions): void
+    {
+        $allowedFunctions = SecurityPolicyDefaults::addDefaultsToIndexedArray($functions, SecurityPolicyDefaults::FUNCTIONS);
+        $this->allowedFunctions = array_flip($allowedFunctions);
+    }
+
+
 }
