@@ -93,8 +93,6 @@ const METHODS = [
 ];
 
 const PROPERTIES = [
-    'Twig\Template' => ['*'],
-    'Twig\Markup' => ['*'],
 ];
 
 
