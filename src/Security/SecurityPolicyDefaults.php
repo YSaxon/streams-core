@@ -7,98 +7,108 @@
  */
 class SecurityPolicyDefaults {
 public const INCLUDE_DEFAULTS = '(include_defaults)';
+const TAGS = [
+    'autoescape',
+    'filter',
+    'do',
+    'flush',
+    'for',
+    'set',
+    'verbatium',
+    'if',
+    'spaceless',
+    'sandbox'
+];
+
+const FILTERS =  [
+    'abs',
+    'batch',
+    'capitalize',
+    'convert_encoding',
+    'date',
+    'date_modify',
+    'default',
+    'escape',
+    'first',
+    'format',
+    'join',
+    'json_encode',
+    'keys',
+    'last',
+    'length',
+    'lower',
+    'merge',
+    'nl2br',
+    'number_format',
+    'raw',
+    'replace',
+    'reverse',
+    'slice',
+    'sort',
+    'split',
+    'striptags',
+    'title',
+    'trim',
+    'upper',
+    'url_encode',
+    'country_name',
+    'currency_name',
+    'currency_symbol',
+    'language_name',
+    'locale_name',
+    'timezone_name',
+    'format_currency',
+    'format_number',
+    'format_decimal_number',
+    'format_currency_number',
+    'format_percent_number',
+    'format_scientific_number',
+    'format_spellout_number',
+    'format_ordinal_number',
+    'format_duration_number',
+    'format_date',
+    'format_datetime',
+    'format_time',
+];
+
+const FUNCTIONS = [
+    'attribute',
+    'block',
+    'constant',
+    'cycle',
+    'date',
+    'html_classes',
+    'max',
+    'min',
+    'parent',
+    'random',
+    'range',
+    'source',
+];
+
+const METHODS = [
+    'Twig\Template' => ['*'],
+    'Twig\Markup' => ['*'],
+    '*' => ['get*', 'has*', 'is*', '__toString', 'toString']
+];
+
+const PROPERTIES = [
+    'Twig\Template' => ['*'],
+    'Twig\Markup' => ['*'],
+];
+
+
 static function addDefaultsToAll(&$allowedTags, &$allowedFilters, &$allowedFunctions, &$allowedMethods, &$allowedProperties)
     {
-        $allowedTags = self::addDefaultsToIndexedArray($allowedTags, [
-            'autoescape',
-            'filter',
-            'do',
-            'flush',
-            'for',
-            'set',
-            'verbatium',
-            'if',
-            'spaceless',
-            'sandbox'
-        ]);
+        $allowedTags = self::addDefaultsToIndexedArray($allowedTags, self::TAGS);
 
-        $allowedFilters = self::addDefaultsToIndexedArray($allowedFilters, [
-            'abs',
-            'batch',
-            'capitalize',
-            'convert_encoding',
-            'date',
-            'date_modify',
-            'default',
-            'escape',
-            'first',
-            'format',
-            'join',
-            'json_encode',
-            'keys',
-            'last',
-            'length',
-            'lower',
-            'merge',
-            'nl2br',
-            'number_format',
-            'raw',
-            'replace',
-            'reverse',
-            'slice',
-            'sort',
-            'split',
-            'striptags',
-            'title',
-            'trim',
-            'upper',
-            'url_encode',
-            'country_name',
-            'currency_name',
-            'currency_symbol',
-            'language_name',
-            'locale_name',
-            'timezone_name',
-            'format_currency',
-            'format_number',
-            'format_decimal_number',
-            'format_currency_number',
-            'format_percent_number',
-            'format_scientific_number',
-            'format_spellout_number',
-            'format_ordinal_number',
-            'format_duration_number',
-            'format_date',
-            'format_datetime',
-            'format_time',
-        ]);
+        $allowedFilters = self::addDefaultsToIndexedArray($allowedFilters, self::FILTERS);
 
-        $allowedFunctions = self::addDefaultsToIndexedArray($allowedFunctions, [
-            'attribute',
-            'block',
-            'constant',
-            'cycle',
-            'date',
-            'html_classes',
-            'max',
-            'min',
-            'parent',
-            'random',
-            'range',
-            'source',
-        ]);
+        $allowedFunctions = self::addDefaultsToIndexedArray($allowedFunctions, self::FUNCTIONS);
 
+        $allowedMethods = self::addDefaultsToAssociativeArray($allowedMethods, self::METHODS);
 
-        $allowedMethods = self::addDefaultsToAssociativeArray($allowedMethods, [
-            'Twig\Template' => ['*'],
-            'Twig\Markup' => ['*'],
-            '*' => ['get*', 'has*', 'is*', '__toString', 'toString']
-        ]);
-
-        $allowedProperties = self::addDefaultsToAssociativeArray($allowedProperties, [
-            'Twig\Template' => ['*'],
-            'Twig\Markup' => ['*'],
-        ]);
+        $allowedProperties = self::addDefaultsToAssociativeArray($allowedProperties, self::PROPERTIES);
 
     }
 
