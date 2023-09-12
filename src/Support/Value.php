@@ -142,7 +142,11 @@ class Value
          * then parse it as a template.
          */
         if (is_string($value) && preg_match("/^{$term}.([a-zA-Z\\_]+)/", $value, $match)) {
-            $value = (string) $this->template->render("{{ {$value}|raw }}", $payload);
+            try {
+                $value = (string) $this->template->render("{{ {$value}|raw }}", $payload);
+            } catch (\Exception $e) {
+                $value = (string) $value . "[rendering failed: " . $e->getMessage() . "]";
+            }
         }
 
         $payload[$term] = $entry;
@@ -197,7 +201,11 @@ class Value
          * string then render it.
          */
         if (is_string($value) && Str::contains($value, ['{{', '{%'])) {
-            $value = (string) $this->template->render($value, [$term => $entry]);
+            try {
+                $value = (string) $this->template->render($value, [$term => $entry]);
+            } catch (\Exception $e) {
+                $value = (string) $value . "[rendering failed: " . $e->getMessage() . "]";
+            }
         }
 
         if (is_string($value) && Arr::get($parameters, 'is_safe') !== true) {
