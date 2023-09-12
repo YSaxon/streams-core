@@ -1,6 +1,7 @@
 <?php namespace Anomaly\Streams\Platform\View;
 
 use Anomaly\Streams\Platform\Security\SecurityPolicy;
+use Anomaly\Streams\Platform\Security\SecurityPolicyDefaults;
 use Anomaly\Streams\Platform\Security\SandboxingTemplate;
 use Anomaly\Streams\Platform\View\Twig\Bridge;
 use Anomaly\Streams\Platform\View\Twig\Compiler;
