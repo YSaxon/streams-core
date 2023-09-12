@@ -147,7 +147,8 @@ static function addDefaultsToAll(&$allowedTags, &$allowedFilters, &$allowedFunct
     {
         if (in_array(SecurityPolicyDefaults::INCLUDE_DEFAULTS, $array)) {
             //remove DEFAULTS marker
-            $array = array_diff($array, [self::INCLUDE_DEFAULTS]);
+            $key = array_search(SecurityPolicyDefaults::INCLUDE_DEFAULTS, $array);
+            unset($array[$key]);
             //add defaults
             $array = self::assoc_array_merge($array, $defaults);
         }
