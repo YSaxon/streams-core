@@ -1,8 +1,9 @@
 <?php namespace Anomaly\Streams\Platform\Security;
 
 /**
- * Represents a security policy which need to be enforced when sandbox mode is enabled.
- *
+ * A set of defaults for the security policy. These can be automatically added to the policy by including the special value SecurityPolicyDefaults::INCLUDE_DEFAULTS in the array of allowed tags, filters, functions, methods, or properties.
+ * The static functions in this class simply check if that special value is present, and if so, replace it with the actual defaults. 
+ * 
  * @author Yaakov Saxon.
  */
 class SecurityPolicyDefaults {
