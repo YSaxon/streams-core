@@ -116,4 +116,35 @@ public function testIsNotAllowedWithClassWildcard()
     $this->assertFalse($matcher->isAllowed($obj, 'setDate'));
 }
 
+public function testIsAllowedWithClassPartialWildcard()
+{
+    $allowedMethods = [
+        'Parent*' => ['do*']
+    ];
+    $matcher = new MethodMatcher($allowedMethods);
+
+    $parentObj = new ParentClass();
+    $childObj = new ChildClass();
+    $unrelatedObj = new DateTime();
+
+    // Check method in parent class for parent object
+    $this->assertTrue($matcher->isAllowed($parentObj, 'doSomething'));
+
+    // Check method in parent class for child object
+    $this->assertTrue($matcher->isAllowed($childObj, 'doSomething'));
+
+    // Check method only in child class for child object
+    $this->assertTrue($matcher->isAllowed($childObj, 'doAnotherThing'));
+
+    // Make sure method in parent class is not allowed for unrelated object
+    $this->assertFalse($matcher->isAllowed($unrelatedObj, 'doSomething'));
+}
+}
+
+class ParentClass {
+    public function doSomething() {}
+}
+
+class ChildClass extends ParentClass {
+    public function doAnotherThing() {}
 }
