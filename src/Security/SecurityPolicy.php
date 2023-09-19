@@ -58,7 +58,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
         if ($tags && !isset($this->allowedTags['*'])) {
             foreach ($tags as $tag) {
                 if (! isset($this->allowedTags[$tag])) {
-                    throw new SecurityNotAllowedTagError(sprintf('Tag "%s" is not allowed1.', $tag), $tag);
+                    throw new SecurityNotAllowedTagError(sprintf('Tag "%s" is not allowed.', $tag), $tag);
                 }
             }
         }
@@ -66,7 +66,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
         if ($filters && !isset($this->allowedFilters['*'])) {
             foreach ($filters as $filter) {
                 if (! isset($this->allowedFilters[$filter])) {
-                    throw new SecurityNotAllowedFilterError(sprintf('Filter "%s" is not allowed20.', $filter), $filter);
+                    throw new SecurityNotAllowedFilterError(sprintf('Filter "%s" is not allowed.', $filter), $filter);
                 }
             }
         }
@@ -74,7 +74,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
         if ($functions && !isset($this->allowedFunctions['*'])) {
             foreach ($functions as $function) {
                 if (! isset($this->allowedFunctions[$function])) {
-                    throw new SecurityNotAllowedFunctionError(sprintf('Function "%s" is not allowed3.', $function), $function);
+                    throw new SecurityNotAllowedFunctionError(sprintf('Function "%s" is not allowed.', $function), $function);
                 }
             }
         }
