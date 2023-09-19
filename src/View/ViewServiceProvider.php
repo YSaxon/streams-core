@@ -2,13 +2,14 @@
 
 use Anomaly\Streams\Platform\Security\SecurityPolicy;
 use Anomaly\Streams\Platform\Security\SecurityPolicyDefaults;
-use Anomaly\Streams\Platform\Security\SandboxingTemplate;
+use Anomaly\Streams\Platform\Security\StorageSourcePolicy;
 use Anomaly\Streams\Platform\View\Twig\Bridge;
 use Anomaly\Streams\Platform\View\Twig\Compiler;
 use Anomaly\Streams\Platform\View\Twig\Engine;
 use Anomaly\Streams\Platform\View\Twig\Loader;
 use InvalidArgumentException;
 use Twig\Extension\SandboxExtension;
+use Twig\Sandbox\SourcePolicyInterface;
 use Twig_Loader_Array;
 use Twig_Loader_Chain;
 
@@ -249,24 +250,22 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
         // Options: off, manual, auto, global
         // | off: The sandbox extension is not loaded.
         // | manual: The sandbox extension is loaded, but disabled, and must be enabled manually with either the sandbox tag or the include(sandbox=true) function.
-        // | auto: The sandbox is loaded disabled, but automatically enabled for all dynamically constructed Template objects using the SandboxingTemplate class.
+        // | auto: The sandbox is loaded disabled, but automatically enabled for all dynamically constructed Template objects using a sourcePolicy.
         // | global: The sandbox is globally enabled and applies to even hardcoded .twig files.
         $sandboxEnabled = $this->app['config']->get('twig.security_policy.enabled', 'auto');
+
         if ($sandboxEnabled != 'off') {
-        // Bind the sandbox extension with our securityPolicy, and global sandboxing setting
+        // Bind the sandbox extension with our securityPolicy, global sandboxing setting, and sourcePolicy
             $this->app->bind(SandboxExtension::class, function ($app) use ($sandboxEnabled) {
-                return new SandboxExtension($app->make('Twig\Sandbox\SecurityPolicyInterface'), $sandboxEnabled == 'global');
+                return new SandboxExtension($app->make('Twig\Sandbox\SecurityPolicyInterface'), $sandboxEnabled == 'global',
+                    $sandboxEnabled == 'auto' ? $app->make(StorageSourcePolicy::class) : null
+            );
             });
         }
     }
 
     protected function overrideTemplateSingleton()
     {
-        $sandboxEnabled = $this->app->make('config')->get('twig.security_policy.enabled', 'auto');
-        if ($sandboxEnabled == 'auto') {
-            // If the sandbox is not enabled globally, then we need to use our SandboxingTemplate class to enable it for any dynamically generated (and therefore possibly user-controlled) templates
-            $this->app->singleton("Anomaly\Streams\Platform\Support\Template", SandboxingTemplate::class);
-        }
     }
 
     /**

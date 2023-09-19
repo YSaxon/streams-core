@@ -7,6 +7,12 @@
             "email": "ryan@pyrocms.com"
         }
     ],
+    "repositories": {
+        "twig": {
+            "type": "vcs",
+            "url": "https://github.com/YSaxon/Twig.git"
+        }
+    },
     "require": {
         "laravel/framework": "^8.0",
         "laravel/helpers": "^1.0",
