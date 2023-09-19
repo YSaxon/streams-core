@@ -30,7 +30,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
 
 /**
  * 
- * For all params, you may include the special value SecurityPolicyDefaults::INCLUDE_DEFAULTS in the array to keep the default whitelisted properties (in addition to those you pass in).
+ * For all params, you may include the special value SecurityPolicyDefaults::INCLUDE_DEFAULTS in the array to keep the default whitelisted entities (in addition to those you pass in).
  * 
  * Asterisks function as wildcards:
  * For tags, filters, and functions, passing `['*']` will allow all of that type, though this is not recommended.
@@ -45,7 +45,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
  */
     public function __construct(array $allowedTags = [SecurityPolicyDefaults::INCLUDE_DEFAULTS], array $allowedFilters = [SecurityPolicyDefaults::INCLUDE_DEFAULTS], array $allowedMethods = [SecurityPolicyDefaults::INCLUDE_DEFAULTS], array $allowedProperties = [SecurityPolicyDefaults::INCLUDE_DEFAULTS], array $allowedFunctions = [SecurityPolicyDefaults::INCLUDE_DEFAULTS])
     {
-        SecurityPolicyDefaults::addDefaultsToAll($allowedTags, $allowedFilters, $allowedFunctions, $allowedMethods, $allowedProperties);
+        SecurityPolicyDefaults::processDefaultsToken($allowedTags, $allowedFilters, $allowedFunctions, $allowedMethods, $allowedProperties);
         $this->allowedTags = array_flip($allowedTags);
         $this->allowedFilters = array_flip($allowedFilters);
         $this->allowedFunctions = array_flip($allowedFunctions);
@@ -101,31 +101,31 @@ final class SecurityPolicy implements SecurityPolicyInterface
     public function setAllowedTags(array $tags): void
     {
         //if INCLUDE_DEFAULTS is in the array, remove it and add the defaults
-        $allowedTags = SecurityPolicyDefaults::addDefaultsToIndexedArray($tags, SecurityPolicyDefaults::TAGS);
+        $allowedTags = SecurityPolicyDefaults::processDefaultsTokenForIndexedArray($tags, SecurityPolicyDefaults::TAGS);
         $this->allowedTags = array_flip($allowedTags);
     }
 
     public function setAllowedFilters(array $filters): void
     {
-        $allowedFilters = SecurityPolicyDefaults::addDefaultsToIndexedArray($filters, SecurityPolicyDefaults::FILTERS);
+        $allowedFilters = SecurityPolicyDefaults::processDefaultsTokenForIndexedArray($filters, SecurityPolicyDefaults::FILTERS);
         $this->allowedFilters = array_flip($allowedFilters);
     }
 
     public function setAllowedMethods(array $methods): void
     {
-        $allowedMethods = SecurityPolicyDefaults::addDefaultsToAssociativeArray($methods, SecurityPolicyDefaults::METHODS);
+        $allowedMethods = SecurityPolicyDefaults::processDefaultsTokenForAssociativeArray($methods, SecurityPolicyDefaults::METHODS);
         $this->allowedMethods = new MethodMatcher($allowedMethods);
     }
 
     public function setAllowedProperties(array $properties): void
     {
-        $allowedProperties = SecurityPolicyDefaults::addDefaultsToAssociativeArray($properties, SecurityPolicyDefaults::PROPERTIES);
+        $allowedProperties = SecurityPolicyDefaults::processDefaultsTokenForAssociativeArray($properties, SecurityPolicyDefaults::PROPERTIES);
         $this->allowedProperties = new MethodMatcher($allowedProperties);
     }
 
     public function setAllowedFunctions(array $functions): void
     {
-        $allowedFunctions = SecurityPolicyDefaults::addDefaultsToIndexedArray($functions, SecurityPolicyDefaults::FUNCTIONS);
+        $allowedFunctions = SecurityPolicyDefaults::processDefaultsTokenForIndexedArray($functions, SecurityPolicyDefaults::FUNCTIONS);
         $this->allowedFunctions = array_flip($allowedFunctions);
     }
 

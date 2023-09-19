@@ -95,22 +95,21 @@ const METHODS = [
 const PROPERTIES = [
 ];
 
-
-static function addDefaultsToAll(&$allowedTags, &$allowedFilters, &$allowedFunctions, &$allowedMethods, &$allowedProperties)
+static function processDefaultsToken(&$allowedTags, &$allowedFilters, &$allowedFunctions, &$allowedMethods, &$allowedProperties)
     {
-        $allowedTags = self::addDefaultsToIndexedArray($allowedTags, self::TAGS);
+        $allowedTags = self::processDefaultsTokenForIndexedArray($allowedTags, self::TAGS);
 
-        $allowedFilters = self::addDefaultsToIndexedArray($allowedFilters, self::FILTERS);
+        $allowedFilters = self::processDefaultsTokenForIndexedArray($allowedFilters, self::FILTERS);
 
-        $allowedFunctions = self::addDefaultsToIndexedArray($allowedFunctions, self::FUNCTIONS);
+        $allowedFunctions = self::processDefaultsTokenForIndexedArray($allowedFunctions, self::FUNCTIONS);
 
-        $allowedMethods = self::addDefaultsToAssociativeArray($allowedMethods, self::METHODS);
+        $allowedMethods = self::processDefaultsTokenForAssociativeArray($allowedMethods, self::METHODS);
 
-        $allowedProperties = self::addDefaultsToAssociativeArray($allowedProperties, self::PROPERTIES);
+        $allowedProperties = self::processDefaultsTokenForAssociativeArray($allowedProperties, self::PROPERTIES);
 
     }
 
-    static function addDefaultsToIndexedArray(array $array, array $defaults)
+    static function processDefaultsTokenForIndexedArray(array $array, array $defaults)
     {
         if (in_array(self::INCLUDE_DEFAULTS, $array)) {
             //remove DEFAULTS marker
@@ -150,8 +149,7 @@ static function addDefaultsToAll(&$allowedTags, &$allowedFilters, &$allowedFunct
         return $new_array;
     }
 
-
-    static function addDefaultsToAssociativeArray(array $array, array $defaults)
+    static function processDefaultsTokenForAssociativeArray(array $array, array $defaults)
     {
         if (in_array(SecurityPolicyDefaults::INCLUDE_DEFAULTS, $array)) {
             //remove DEFAULTS marker
