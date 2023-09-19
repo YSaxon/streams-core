@@ -34,8 +34,8 @@ final class SecurityPolicy implements SecurityPolicyInterface
  * For all params, you may include the special value `SecurityPolicyDefaults::INCLUDE_DEFAULTS` in the array to use the default whitelisted entities (in addition to any others you pass in).
  * 
  * ### Wildcards:
- * For tags, filters, and functions, passing `['*']` will allow all of that type, though this is not recommended.
- * For methods and properties, you can use `'*'` as the _classname_ to permit the given fields on any class, and an `'*'` either as or at the end of a _fieldname_ (eg `'sortBy*'`) to allow any fields with that prefix. See the defaults for examples.
+ * - For tags, filters, and functions, `['*']` will allow all of that type, though this is not recommended.
+ * - For methods and properties, wildcards can be used either alone or at the end of class names (`'*'` or `'MyModule\Blocks\*' => [...]`) or member names (`...=> ['*']` or `['get*', ...]`).
  * 
  * @param array $allowedTags An array of tags that are allowed.
  * @param array $allowedFilters An array of filters that are allowed.

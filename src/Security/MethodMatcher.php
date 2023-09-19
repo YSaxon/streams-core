@@ -29,7 +29,10 @@ class MethodMatcher
         $method = strtolower($method); // normalize method name
 
         foreach ($this->allowedMethods as $class => $methods) {
-            if ($class === '*' || $obj instanceof $class) {
+            if (
+                $class === '*' || $obj instanceof $class ||
+                str_ends_with($class, '*') && $this->classOrAncestorMatchesPrefix($obj, rtrim($class, '*'))
+            ) {
                 foreach ($methods as $allowedMethod) {
                     if ($allowedMethod === '*') {
                         $this->cache[$cacheKey] = true;
@@ -51,6 +54,38 @@ class MethodMatcher
         $this->cache[$cacheKey] = false;
         return false;
     }
-}
+
+    private function classOrAncestorMatchesPrefix($obj, $prefix)
+    {
+        $uniqueClasses = [get_class($obj) => true];
+        $queue = [get_class($obj)];
+
+        while (!empty($queue)) {
+            $currentClass = array_shift($queue); // Dequeue
+
+            // Check if current class or interface matches the prefix
+            if (str_starts_with($currentClass, $prefix)) {
+                return true;
+            }
+
+            // Handle parent classes
+            foreach (class_parents($currentClass) as $ancestor) {
+                if (!isset($uniqueClasses[$ancestor])) {
+                    $uniqueClasses[$ancestor] = true;
+                    $queue[] = $ancestor;
+                }
+            }
+
+            // Handle implemented interfaces
+            foreach (class_implements($currentClass) as $ancestor) {
+                if (!isset($uniqueClasses[$ancestor])) {
+                    $uniqueClasses[$ancestor] = true;
+                    $queue[] = $ancestor;
+                }
+            }
+        }
+
+        return false;
+    }
 
 }
