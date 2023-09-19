@@ -1,6 +1,8 @@
 <?php
 
 namespace Anomaly\Streams\Platform\Security;
+use Anomaly\Streams\Platform\Application\Application;
+
 
 use Twig\Sandbox\SourcePolicyInterface;
 use Twig\Source;
@@ -8,17 +10,26 @@ use Twig\Source;
 class StorageSourcePolicy implements SourcePolicyInterface
 {
     protected $storagePath;
-    public function __construct (){
-        $this->storagePath = storage_path();
-    }
-    public function enableSandbox(Source $source) : bool
+    public function __construct(Application $application)
     {
-        //possibly add a cache for speed
+        $this->storagePath = realpath($application->getStoragePath());
+        $this->cache = [];
+    }
+    public function enableSandbox(Source $source = null) : bool
+    {
         if ($source === null) {
             return false;
         }
-        $sourcePath = $source->getPath();
-        //TODO possibly we need to normalize the path here
-        return str_contains($sourcePath, $this->storagePath);
+
+        $source_path = $source->getPath();
+
+        if (isset($this->cache[$source_path])) {
+            return $this->cache[$source_path];
+        }
+        $real_source_path = realpath($source_path);
+        $is_path_in_storage = str_starts_with($real_source_path, $this->storagePath);
+
+        $this->cache[$source_path] = $is_path_in_storage;
+        return $is_path_in_storage;
     }
 }
