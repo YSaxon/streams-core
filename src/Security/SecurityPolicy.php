@@ -30,16 +30,17 @@ final class SecurityPolicy implements SecurityPolicyInterface
 
 /**
  * 
- * For all params, you may include the special value SecurityPolicyDefaults::INCLUDE_DEFAULTS in the array to keep the default whitelisted entities (in addition to those you pass in).
+ * ### Defaults:
+ * For all params, you may include the special value `SecurityPolicyDefaults::INCLUDE_DEFAULTS` in the array to use the default whitelisted entities (in addition to any others you pass in).
  * 
- * Asterisks function as wildcards:
+ * ### Wildcards:
  * For tags, filters, and functions, passing `['*']` will allow all of that type, though this is not recommended.
  * For methods and properties, you can use `'*'` as the _classname_ to permit the given fields on any class, and an `'*'` either as or at the end of a _fieldname_ (eg `'sortBy*'`) to allow any fields with that prefix. See the defaults for examples.
  * 
- * @param array $allowedTags An array of tags that are allowed. 
+ * @param array $allowedTags An array of tags that are allowed.
  * @param array $allowedFilters An array of filters that are allowed.
- * @param array $allowedMethods An array of methods that are allowed. The array should be in the format of [class => [method1, method2, ...], ...]. 
- * @param array $allowedProperties An array of properties that are allowed. The array should be in the format of [class => [property1, property2, ...], ...].
+ * @param array $allowedMethods An array of methods that are allowed. The array should be in the format of `[class => [method1, method2, ...], ...]`.
+ * @param array $allowedProperties An array of properties that are allowed. The array should be in the format of `[class => [property1, property2, ...], ...]`.
  * @param array $allowedFunctions An array of functions that are allowed.
  * 
  */
