@@ -88,9 +88,9 @@ const FUNCTIONS = [
 ];
 
 const METHODS = [
-    'Twig\Template' => ['*'],
+    'Twig\Template' => ['*'], // matches default Twig SecurityPolicy behavior - https://github.com/twigphp/Twig/blob/3ae6fb8723776f4fc9d8ab490fcabcd3173da8e3/src/Sandbox/SecurityPolicy.php#L90
     'Twig\Markup' => ['*'],
-    '*' => ['get*', 'has*', 'is*', '__toString', 'toString']
+    // '*' => ['get*', 'has*', 'is*', '__toString', 'toString'] - matches Drupal Policy behavior https://github.com/drupal/drupal/blob/6efb70cd568335e9b292cde6530cc21c2931c448/core/lib/Drupal/Core/Template/TwigSandboxPolicy.php#L57
 ];
 
 const PROPERTIES = [
